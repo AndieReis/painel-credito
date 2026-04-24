@@ -1,25 +1,79 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Solicitacao } from '../../../models/solicitacao.model';
-import { SolicitacaoItemComponent } from './../solicitacao-item/solicitacao-item.component';
-import { MOCK_SOLICITACOES } from './../../../mocks/solicitacao.mock';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
-
+import {
+  SolicitacaoViewModel,
+  SolicitacoesService,
+} from '../../../services/graphql.service';
+import { SolicitacaoItemComponent } from '../solicitacao-item/solicitacao-item.component';
+import { HeaderComponent } from '../../shared/header/header.component';
+import { ResumoSolicitacoesComponent } from '../resumo-solicitacoes/resumo-solicitacoes.component';
+import { BuscaSolicitacoesComponent } from '../busca-solicitacoes/busca-solicitacoes.component';
+import { FiltroSolicitacoesComponent } from '../filtro-solicitacoes/filtro-solicitacoes.component';
 
 @Component({
   selector: 'app-solicitacao-lista',
-  imports: [CommonModule, SolicitacaoItemComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    SolicitacaoItemComponent,
+    HeaderComponent,
+    ScrollingModule,
+    ResumoSolicitacoesComponent,
+    BuscaSolicitacoesComponent,
+    FiltroSolicitacoesComponent,
+  ],
   templateUrl: './solicitacao-lista.component.html',
-  styleUrl: './solicitacao-lista.component.scss'
+  styleUrls: ['./solicitacao-lista.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolicitacaoListaComponent implements OnInit {
-  solicitacoes: Solicitacao[] = [];
-  isLoading = true;
+  constructor(public service: SolicitacoesService) {}
 
-  ngOnInit(): void {
-    setTimeout(() => {
-      this.solicitacoes = MOCK_SOLICITACOES;
-      this.isLoading = false;
-    }, 1500);
+  filtroSelecionado = signal<string>('');
+  termoBusca = signal<string>('');
+
+  ngOnInit() {
+    if (this.service.solicitacoes().length === 0) {
+      this.service.carregarSolicitacoes();
+    }
+  }
+
+  aplicarFiltro(status: string) {
+    this.filtroSelecionado.set(status);
+  }
+
+  aplicarBusca(termo: string) {
+    this.termoBusca.set(termo.toLocaleLowerCase());
+  }
+
+  listaFiltrada = computed(() => {
+    let lista = this.service.solicitacoes();
+
+    const filtro = this.filtroSelecionado();
+    const busca = this.termoBusca();
+
+    if (filtro) {
+      lista = lista.filter((item) => item.status === filtro);
+    }
+
+    if (busca) {
+      lista = lista.filter((item) =>
+        item.cliente.toLowerCase().includes(busca)
+      );
+    }
+
+    return lista;
+  });
+
+  trackById(index: number, item: SolicitacaoViewModel) {
+    return item.id;
   }
 }

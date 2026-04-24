@@ -1,31 +1,24 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Solicitacao } from '../../../models/solicitacao.model';
+import { SolicitacaoViewModel } from '../../../services/graphql.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-solicitacao-item',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './solicitacao-item.component.html',
-  styleUrl: './solicitacao-item.component.scss',
+  styleUrls: ['./solicitacao-item.component.scss'],
+
 })
 export class SolicitacaoItemComponent {
-  @Input({ required: true }) solicitacao!: Solicitacao;
-  get statusClass(): string {
-    const classMap: Record<string, string> = {
-      pendente: 'status--pendente',
-      em_analise: 'status--analise',
-      aprovado: 'status--aprovado',
-      recusado: 'status--recusado',
-    };
-    return classMap[this.solicitacao.status] ?? '';
+  private router = inject(Router)
+
+  @Input({ required: true }) solicitacao!: SolicitacaoViewModel;
+
+  irParaDetalhe() {
+    this.router.navigate(['/solicitacoes', this.solicitacao.id])
   }
-  get statusLabel(): string {
-    const labelMap: Record<string, string> = {
-      pendente: 'Pendente',
-      em_analise: 'Em Análise',
-      aprovado: 'Aprovado',
-      recusado: 'Recusado',
-    };
-    return labelMap[this.solicitacao.status] ?? this.solicitacao.status;
-  }
+
 }

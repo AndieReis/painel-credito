@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { SolicitacaoListaComponent } from './components/solicitacoes/solicitacao-lista/solicitacao-lista.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [SolicitacaoListaComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  standalone: true,
+  imports: [RouterOutlet],
+  template: `<router-outlet />`
 })
-export class AppComponent {
-  title = 'Painel de Solicitações de Crédito';
-}
+export class AppComponent {}

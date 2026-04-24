@@ -1,16 +1,47 @@
-import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, LOCALE_ID, isDevMode } from '@angular/core';
+import { provideHttpClient,  withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
+
+import { provideApollo } from 'apollo-angular';
+import { HttpLink } from 'apollo-angular/http';
+import { InMemoryCache } from '@apollo/client/core';
 
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { provideServiceWorker } from '@angular/service-worker';
+
 registerLocaleData(localePt);
 
 export const appConfig: ApplicationConfig = {
-    providers: [
-        provideZoneChangeDetection({ eventCoalescing: true }),
-        provideRouter(routes),
-        { provide: LOCALE_ID, useValue: 'pt-BR' }
-    ]
+  providers: [
+    provideRouter(routes),
+
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
+    
+    {
+      provide: LOCALE_ID,
+      useValue: 'pt-BR',
+    },
+
+    provideApollo(() => {
+      const httpLink = inject(HttpLink);
+
+      return {
+        link: httpLink.create({
+          uri: 'http://localhost:4000/graphql',
+        }),
+        cache: new InMemoryCache(),
+      };
+    }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
+  ],
 };
