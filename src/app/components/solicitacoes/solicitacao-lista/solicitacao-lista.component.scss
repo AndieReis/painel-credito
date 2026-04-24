@@ -66,6 +66,23 @@
   width: 100%;
 }
 
+.btn-novo {
+  flex: 1;
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin: 0.7rem;
+}
+
+.btn-novo:hover {
+  background: #15803d;
+}
+
 /* Estiliza o container interno que segura os itens */
 ::ng-deep .cdk-virtual-scroll-content-wrapper {
   display: grid;

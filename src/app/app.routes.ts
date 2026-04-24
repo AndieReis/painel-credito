@@ -20,10 +20,32 @@ export const routes: Routes = [
         .then(m => m.SolicitacaoListaComponent),
     canActivate: [authGuard]
   },
+  // ROTAS ESPECÍFICAS PRIMEIRO
+
+  {
+    path: 'solicitacoes/nova',
+    loadComponent: () =>
+      import('./components/solicitacoes/solicitacao-form/solicitacao-form.component')
+        .then(m => m.SolicitacaoFormComponent),
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'solicitacoes/editar/:id',
+    loadComponent: () =>
+      import('./components/solicitacoes/solicitacao-form/solicitacao-form.component')
+        .then(m => m.SolicitacaoFormComponent),
+    canActivate: [authGuard]
+  },
+
+  // ROTA GENÉRICA SEMPRE POR ÚLTIMO
+
   {
     path: 'solicitacoes/:id',
     loadComponent: () =>
       import('./components/solicitacoes/solicitacao-detalhe/solicitacao-detalhe.component')
-        .then(m => m.SolicitacaoDetalheComponent)
+        .then(m => m.SolicitacaoDetalheComponent),
+    canActivate: [authGuard]
   }
+
 ];

@@ -1,4 +1,5 @@
 <div class="card" (click)="irParaDetalhe()">
+
   <div class="card__header">
     <h3 class="card__cliente">{{ solicitacao.cliente }}</h3>
 
@@ -6,22 +7,36 @@
       {{ solicitacao.statusLabel }}
     </span>
   </div>
+
   <div class="card__body">
+
     <div class="card__info">
-      <span class="card__label">Documento</span
-      ><span class="card__value">{{ solicitacao.documento }}</span>
+      <span class="card__label">Documento</span>
+      <span class="card__value">{{ solicitacao.documento }}</span>
     </div>
+
     <div class="card__info">
-      <span class="card__label">Valor Solicitado</span
-      ><span class="card__value card__value--destaque">
+      <span class="card__label">Valor Solicitado</span>
+      <span class="card__value card__value--destaque">
         {{ solicitacao.valor | currency : "BRL" : "symbol" : "1.2-2" : "pt-BR" }}
       </span>
     </div>
+
     <div class="card__info">
-      <span class="card__label">Data da Solicitação</span
-      ><span class="card__value">
+      <span class="card__label">Data da Solicitação</span>
+      <span class="card__value">
         {{ solicitacao.dataSolicitacao | date : "dd/MM/yyyy" }}
       </span>
     </div>
+
   </div>
+
+  <!-- AÇÕES FORA DO BODY -->
+  <div class="card__acoes">
+    <button (click)="editar(); $event.stopPropagation()">Editar</button>
+    <button (click)="irParaDetalhe(); $event.stopPropagation()">Analisar</button>
+    <button (click)="deletar(); $event.stopPropagation()">Excluir</button>
+  </div>
+
 </div>
+
